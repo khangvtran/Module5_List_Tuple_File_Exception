@@ -74,42 +74,59 @@ def readChart():
     except FileNotFoundError as e:       
         print("Can't open" + str(e))
         readChart()
-        
 
 
-### Driver Code ###
-        
+"""
+this function reads in the seating chart from readChart()
+It looks user to enter the their choice until stopping with 0
+Exception: Non int input, input out of bound
+If seat taken: announce the user
+Compute, then print the total cost and number of seats
+"""
+def buySeat(seatingChart):
+    numRow = len(seatingChart)
+    numCol = len(seatingChart[0])
+    takenSeat = []
+    seatCount = 0
+    totalPrice = 0
+    print(type(int(seatingChart[0][0])))
+    
+    while(True):
+        seat = input("Enter row,col for seat %d or enter 0 to end: " %(seatCount + 1)) 
+        if(seat == "0"): break
+        try:
+            seat = seat.split(",")
+            row = int(seat[0]) - 1
+            col = int(seat[1]) - 1
+            if ((row, col) in takenSeat):
+                print("Sorry, that seat is not available.")
+            else:
+                takenSeat.append((row, col))
+                seatCount += 1;
+                totalPrice += int(seatingChart[row][col])
+                seatingChart[row][col] = "X"
+        except ValueError:
+            print("Row and column must be numbers")
+        except IndexError:
+            print("Invalid row or column")
+    
+    # print price
+    print("Your total: $%d" %totalPrice)
+    # print location  
+    print("Your %d seat(s) at " %seatCount, end = "")
+    for seat in takenSeat:
+        print(seat, end = " ")
+    print("are marked with 'X'")
+    #print updated chart
+    printChart(seatingChart)
+
+
+
+
+
+### Driver Code ###        
 seatingChart = readChart()
-numRow = len(seatingChart)
-numCol = len(seatingChart[0])
-takenSeat = []
-seatCount = 0
-totalPrice = 0
-print(type(int(seatingChart[0][0])))
+buySeat(seatingChart)
 
-while(True):
-    seat = input("Enter row,col for seat %d or enter 0 to end: " %(seatCount + 1)) 
-    if(seat == "0"): break
-    
-    seat = seat.split(",")
-    row = int(seat[0]) - 1
-    col = int(seat[1]) - 1
-    
-    if ((row, col) in takenSeat):
-        print("Sorry, that seat is not available.")
-    else:
-        takenSeat.append((row, col))
-        seatCount += 1;
-        totalPrice += int(seatingChart[row][col])
-        seatingChart[row][col] = "X"
 
-# print price
-print("Your total: $%d" %totalPrice)
-# print location  
-print("Your %d seat(s) at " %seatCount, end = "")
-for seat in takenSeat:
-    print(seat, end =" ")
-print("are marked with 'X'")
-#print updated chart
-printChart(seatingChart)
     
