@@ -32,6 +32,27 @@ except FileNotFoundError as e:
 
 
 
+"""
+print the seating chart in the desired format
+"""
+def printChart(seatingChart):
+    numRow = len(seatingChart)
+    numCol = len(seatingChart[0])
+    print("Price Chart".center((numCol+1)*5))
+    print("Column".center((numCol+1)*5))             # print 'Column'
+    print("Row  " +  "="*5*numCol)         # print Row ==================
+    print(" "*5, end = "")                   
+    for i in range(0, numCol) : print( "%5s"  %str(i+1), end = "")     
+    print("\n")
+    for row in range(numRow):
+        print(str(row+1) + "  | ", end = "") 
+        for col in range(numCol):
+            if (seatingChart[row][col] != "X"):
+                print("%5s"  %str("$" + seatingChart[row][col]), end = "")
+            else:
+                print("%5s"  %str(seatingChart[row][col]), end = "")
+        print("\n")
+
 
 
 """
@@ -49,27 +70,46 @@ def readChart():
             for line in infile:
                 seatingChart.append(line.split())
         printChart(seatingChart)           # call printChart() function
+        return(seatingChart)               # return the chart into global environment
     except FileNotFoundError as e:       
         print("Can't open" + str(e))
         readChart()
         
-"""
-print the seating chart in the desired format
-"""
-def printChart(seatingChart):
-    numRow = len(seatingChart)
-    numCol = len(seatingChart[0])
-    print("Price Chart".center((numCol+1)*5))
-    print("Column".center((numCol+1)*5))             # print 'Column'
-    print("Row  " +  "="*5*numCol)         # print Row ==================
-    print(" "*5, end = "")                   
-    for i in range(0, numCol) : print( "%5s"  %str(i+1), end = "")     
-    print("\n")
-    for row in range(numRow):
-        print(str(row+1) + "  | ", end = "") 
-        for col in range(numCol):
-            print("%5s"  %str("$" + seatingChart[row][col]), end = "")
-        print("\n")
 
-### Driver Code
-readChart()
+
+### Driver Code ###
+        
+seatingChart = readChart()
+numRow = len(seatingChart)
+numCol = len(seatingChart[0])
+takenSeat = []
+seatCount = 0
+totalPrice = 0
+print(type(int(seatingChart[0][0])))
+
+while(True):
+    seat = input("Enter row,col for seat %d or enter 0 to end: " %(seatCount + 1)) 
+    if(seat == "0"): break
+    
+    seat = seat.split(",")
+    row = int(seat[0]) - 1
+    col = int(seat[1]) - 1
+    
+    if ((row, col) in takenSeat):
+        print("Sorry, that seat is not available.")
+    else:
+        takenSeat.append((row, col))
+        seatCount += 1;
+        totalPrice += int(seatingChart[row][col])
+        seatingChart[row][col] = "X"
+
+# print price
+print("Your total: $%d" %totalPrice)
+# print location  
+print("Your %d seat(s) at " %seatCount, end = "")
+for seat in takenSeat:
+    print(seat, end =" ")
+print("are marked with 'X'")
+#print updated chart
+printChart(seatingChart)
+    
